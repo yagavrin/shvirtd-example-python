@@ -1,0 +1,24 @@
+# Ignore Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Ignore virtual environments
+.venv/
+
+# Ignore IDE specific files
+.vscode/
+.idea/
+
+# Ignore local development files
+*.env
+
+# Ignore project files
+haproxy/
+nginx/
+LICENSE
+README.md
+proxy.yaml
+schema.pdf
