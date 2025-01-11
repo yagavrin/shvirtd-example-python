@@ -1,0 +1,52 @@
+x-deploy: &deploy-dev
+  deploy:
+    resources:
+      limits:
+        cpus: "0.5"
+        memory: 256M
+      reservations:
+        memory: 256M
+x-env_file: &env_file
+  env_file:
+    - .env
+x-restart: &restart
+  restart: always #no, on-failure , always(default), unless-stopped 
+
+include:
+  - proxy.yaml
+  
+services:
+  db:
+    image: mysql:8
+    networks: 
+      backend: 
+        ipv4_address: 172.20.0.10
+    <<: [*deploy-dev, *env_file, *restart]
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_HOST="%" # <--- Это вам обязательно понадобится при выполнении ДЗ!
+
+  web:
+    depends_on: ["db"]
+    image: cr.yandex/crpqfi2amksuff1d4sfp/shvirtd-example-python:1.0.0
+    networks: 
+      backend: 
+        ipv4_address: 172.20.0.5
+    <<: [*deploy-dev, *env_file, *restart]
+    environment:
+      - DB_HOST=172.20.0.10
+      - DB_USER=${MYSQL_USER}
+      - DB_PASSWORD=${MYSQL_PASSWORD}
+      - DB_NAME=${MYSQL_DATABASE}
+    # healthcheck:
+    #   test:
+    #     [
+    #       "CMD-SHELL",
+    #       "curl -f http://127.0.0.1/wp-admin/install.php/ | grep 'Продолжить' || exit 1",
+    #     ]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 2
