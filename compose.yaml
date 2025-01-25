@@ -21,7 +21,7 @@ services:
     networks: 
       backend: 
         ipv4_address: 172.20.0.10
-    <<: [*deploy-dev, *env_file, *restart]
+    <<: [*env_file, *restart]
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
@@ -35,7 +35,7 @@ services:
     networks: 
       backend: 
         ipv4_address: 172.20.0.5
-    <<: [*deploy-dev, *env_file, *restart]
+    <<: [*env_file, *restart]
     environment:
       - DB_HOST=db
       - DB_USER=${MYSQL_USER}
